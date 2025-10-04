@@ -40,18 +40,18 @@ export default function Home() {
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-pink-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">
             Study Notes Sharing App
           </h1>
-          <p className="text-xl text-gray-500 mb-8 max-w-2xl mx-auto">
-            A public platform to share and discover study notes with fellow students. 
-            Share your knowledge, learn together! 📚✨
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Upload, share, and discover high-quality study notes with your peers. 
+            Collaborate and excel together! 📚✨
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/register">
-              <Button className="text-lg px-8 py-6">
+              <Button size="lg" className="text-lg px-8">
                 Get Started
               </Button>
             </Link>
             <Link href="/login">
-              <Button variant="outline" className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" className="text-lg px-8">
                 Login
               </Button>
             </Link>
@@ -75,11 +75,11 @@ export default function Home() {
           <Card className="border-2 border-rose-200 bg-white/80 backdrop-blur">
             <CardHeader>
               <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 text-rose-600" />
+                <BookOpen className="h-6 w-6 text-rose-600" />
               </div>
-              <CardTitle className="text-rose-900">Public Feed</CardTitle>
+              <CardTitle className="text-rose-900">Browse & Download</CardTitle>
               <CardDescription>
-                All notes are public and visible immediately - like a study Facebook!
+                Access approved notes from fellow students and enhance your learning
               </CardDescription>
             </CardHeader>
           </Card>
@@ -87,11 +87,11 @@ export default function Home() {
           <Card className="border-2 border-pink-200 bg-white/80 backdrop-blur">
             <CardHeader>
               <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center mb-4">
-                <BookOpen className="h-6 w-6 text-pink-600" />
+                <Shield className="h-6 w-6 text-pink-600" />
               </div>
-              <CardTitle className="text-pink-900">Comment & Discuss</CardTitle>
+              <CardTitle className="text-pink-900">Admin Approved</CardTitle>
               <CardDescription>
-                Engage with the community through comments and discussions
+                All uploads are reviewed by admins to ensure quality content
               </CardDescription>
             </CardHeader>
           </Card>
@@ -127,8 +127,8 @@ export default function Home() {
                   3
                 </div>
                 <div>
-                  <h3 className="font-semibold text-pink-900">Instant Sharing</h3>
-                  <p className="text-gray-500">Notes appear immediately in the public feed</p>
+                  <h3 className="font-semibold text-pink-900">Admin Review</h3>
+                  <p className="text-muted-foreground">Admins approve uploads to maintain quality</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -137,7 +137,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-rose-900">Learn Together</h3>
-                  <p className="text-gray-500">Comment, discuss, and excel as a community</p>
+                  <p className="text-muted-foreground">Comment, discuss, and excel as a community</p>
                 </div>
               </div>
             </div>
