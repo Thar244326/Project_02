@@ -36,7 +36,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const subject = searchParams.get('subject');
 
-    let query: any = {};
+    // Replace let query with const
+    const query: { subject?: string } = {};
 
     if (subject) {
       query.subject = subject;
@@ -56,9 +57,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Upload a new note
-export async function POST(request: NextRequest) {
+// Fix type annotations for any
+type NoteData = {
+  title: string;
+  content: string;
+  author: string;
+  status?: string;
+};
+
+// Update the handler signature
+export async function POST(request: NextRequest): Promise<Response> {
   try {
+    const data: NoteData = await request.json();
     const user = await getUserFromToken(request);
     if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -66,8 +76,7 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
 
-    const { title, description, subject, referenceLink } =
-      await request.json();
+    const { title, description, subject, referenceLink } = data;
 
     if (!title || !description || !subject) {
       return NextResponse.json(
@@ -116,7 +125,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const updateData: any = { status };
+    const updateData: { status: string; rejectionReason?: string } = { status };
     
     if (status === 'rejected' && rejectionReason) {
       updateData.rejectionReason = rejectionReason;

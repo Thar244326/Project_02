@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
@@ -29,13 +29,7 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, router]);
 
-  useEffect(() => {
-    if (user) {
-      fetchMyNotes();
-    }
-  }, [user]);
-
-  const fetchMyNotes = async () => {
+  const fetchMyNotes = useCallback(async () => {
     try {
       const res = await fetch('/api/notes', {
         credentials: 'include',
@@ -44,7 +38,7 @@ export default function ProfilePage() {
       if (res.ok) {
         // Filter notes uploaded by current user
         const userNotes = data.notes.filter(
-          (note: any) => note.uploadedBy._id === user?._id
+          (note: { uploadedBy: { _id: string } }) => note.uploadedBy._id === user?._id
         );
         setMyNotes(userNotes);
       }
@@ -58,7 +52,11 @@ export default function ProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  useEffect(() => {
+    fetchMyNotes();
+  }, [fetchMyNotes]);
 
   if (authLoading || loading) {
     return (
@@ -141,7 +139,7 @@ export default function ProfilePage() {
               <div>
                 <CardTitle className="text-pink-900">My Uploads</CardTitle>
                 <CardDescription>
-                  Notes you've shared with the community
+                  Notes you&apos;ve shared with the community
                 </CardDescription>
               </div>
               <Button onClick={() => router.push('/upload')}>
@@ -154,7 +152,7 @@ export default function ProfilePage() {
             {myNotes.length === 0 ? (
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">You haven't uploaded any notes yet</p>
+                <p className="text-gray-500">You haven&apos;t created any notes yet.</p>
                 <Button className="mt-4" onClick={() => router.push('/upload')}>
                   <UploadIcon className="h-4 w-4 mr-2" />
                   Share Your First Note

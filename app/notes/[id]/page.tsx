@@ -53,11 +53,10 @@ export default function NoteDetailPage() {
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (params.id) {
-      fetchNoteDetails();
-      fetchComments();
-    }
-  }, [params.id]);
+    fetchNoteDetails();
+    fetchComments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchNoteDetails = async () => {
     try {

@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Upload, Users, Shield } from 'lucide-react';
+import { BookOpen, Upload, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {

@@ -39,10 +39,9 @@ export default function NotesPage() {
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (user) {
-      fetchNotes();
-    }
-  }, [user]);
+    fetchNotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchNotes = async () => {
     try {

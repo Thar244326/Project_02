@@ -17,14 +17,20 @@ interface CachedConnection {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var mongoose: CachedConnection | undefined;
 }
 
-let cached: CachedConnection = global.mongoose || { conn: null, promise: null };
+let cached = ((globalThis as unknown as { mongoose?: CachedConnection }).mongoose || {
+  conn: null,
+  promise: null,
+}) as CachedConnection;
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!cached) {
+  cached = {
+    conn: null,
+    promise: null,
+  };
+  (globalThis as unknown as { mongoose: CachedConnection }).mongoose = cached;
 }
 
 async function connectDB() {
