@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Calendar, User, ExternalLink, MessageCircle, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 
 interface Note {
   _id: string;
@@ -60,9 +61,7 @@ export default function NoteDetailPage() {
 
   const fetchNoteDetails = async () => {
     try {
-      const res = await fetch('/api/notes', {
-        credentials: 'include',
-      });
+      const res = await apiFetch('/api/notes');
       const data = await res.json();
       if (res.ok) {
         const foundNote = data.notes.find((n: Note) => n._id === params.id);
@@ -91,9 +90,7 @@ export default function NoteDetailPage() {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`/api/comments?noteId=${params.id}`, {
-        credentials: 'include',
-      });
+      const res = await apiFetch(`/api/comments?noteId=${params.id}`);
       const data = await res.json();
       if (res.ok) {
         setComments(data.comments || []);
@@ -109,10 +106,9 @@ export default function NoteDetailPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch('/api/comments', {
+      const res = await apiFetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({
           noteId: params.id,
           content: newComment,

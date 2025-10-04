@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Upload as UploadIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
+import { apiFetch } from '@/lib/api';
 
 export default function UploadPage() {
   const { user, loading: authLoading } = useAuth();
@@ -36,12 +37,11 @@ export default function UploadPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/notes', {
+      const res = await apiFetch('/api/notes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify(formData),
       });
 

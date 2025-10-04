@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { BookOpen, Calendar, User, Search, FileText, MessageCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 
 interface Note {
   _id: string;
@@ -45,9 +46,7 @@ export default function NotesPage() {
 
   const fetchNotes = async () => {
     try {
-      const res = await fetch('/api/notes', {
-        credentials: 'include',
-      });
+      const res = await apiFetch('/api/notes');
       const data = await res.json();
       if (res.ok) {
         setNotes(data.notes);

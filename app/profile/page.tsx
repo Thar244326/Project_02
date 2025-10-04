@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { User, Mail, CreditCard, Calendar, FileText, Upload as UploadIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiFetch } from '@/lib/api';
 
 interface MyNote {
   _id: string;
@@ -31,9 +32,7 @@ export default function ProfilePage() {
 
   const fetchMyNotes = useCallback(async () => {
     try {
-      const res = await fetch('/api/notes', {
-        credentials: 'include',
-      });
+      const res = await apiFetch('/api/notes');
       const data = await res.json();
       if (res.ok) {
         // Filter notes uploaded by current user
