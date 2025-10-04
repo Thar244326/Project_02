@@ -60,9 +60,9 @@ export async function GET(request: NextRequest) {
 // Fix type annotations for any
 type NoteData = {
   title: string;
-  content: string;
-  author: string;
-  status?: string;
+  description: string;
+  subject: string;
+  referenceLink?: string;
 };
 
 // Update the handler signature

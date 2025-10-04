@@ -69,7 +69,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
@@ -82,7 +82,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <Button

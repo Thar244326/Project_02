@@ -233,7 +233,7 @@ export default function NoteDetailPage() {
                 placeholder="Share your thoughts or ask a question..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                className="mb-2 border-pink-200 focus:border-pink-500"
+                className="mb-2 border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
                 rows={3}
               />
               <Button type="submit" disabled={submitting || !newComment.trim()}>

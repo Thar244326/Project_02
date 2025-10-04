@@ -71,7 +71,7 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
@@ -83,7 +83,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
                 required
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <div className="space-y-2">
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="border-pink-200 focus:border-pink-500"
+                className="border-pink-200 focus:border-pink-500 placeholder:text-gray-400"
               />
             </div>
             <Button
