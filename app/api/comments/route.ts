@@ -96,6 +96,60 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PATCH - Update a comment (owner only)
+export async function PATCH(request: NextRequest) {
+  try {
+    const user = await getUserFromToken(request);
+    if (!user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectDB();
+
+    const { commentId, content } = await request.json();
+
+    if (!commentId || !content) {
+      return NextResponse.json(
+        { message: 'Comment ID and content are required' },
+        { status: 400 }
+      );
+    }
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return NextResponse.json(
+        { message: 'Comment not found' },
+        { status: 404 }
+      );
+    }
+
+    // Only the comment owner can edit
+    if (comment.userId.toString() !== user._id.toString()) {
+      return NextResponse.json({ message: 'Forbidden - You can only edit your own comments' }, { status: 403 });
+    }
+
+    comment.content = content;
+    await comment.save();
+
+    const updatedComment = await Comment.findById(commentId).populate(
+      'userId',
+      'name studentId'
+    );
+
+    return NextResponse.json({
+      message: 'Comment updated successfully',
+      comment: updatedComment,
+    });
+  } catch (error) {
+    console.error('Update comment error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 // DELETE - Delete a comment (admin or comment owner)
 export async function DELETE(request: NextRequest) {
   try {

@@ -106,6 +106,59 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 }
 
+// PUT - Update note content (owner only)
+export async function PUT(request: NextRequest) {
+  try {
+    const user = await getUserFromToken(request);
+    if (!user) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectDB();
+
+    const { noteId, title, description, subject, referenceLink } = await request.json();
+
+    if (!noteId) {
+      return NextResponse.json(
+        { message: 'Note ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const note = await Note.findById(noteId);
+
+    if (!note) {
+      return NextResponse.json({ message: 'Note not found' }, { status: 404 });
+    }
+
+    // Only the note owner can edit
+    if (note.uploadedBy.toString() !== user._id.toString()) {
+      return NextResponse.json({ message: 'Forbidden - You can only edit your own notes' }, { status: 403 });
+    }
+
+    // Update fields
+    if (title) note.title = title;
+    if (description) note.description = description;
+    if (subject) note.subject = subject;
+    if (referenceLink !== undefined) note.referenceLink = referenceLink;
+
+    await note.save();
+
+    const updatedNote = await Note.findById(noteId).populate('uploadedBy', 'name studentId');
+
+    return NextResponse.json({
+      message: 'Note updated successfully',
+      note: updatedNote,
+    });
+  } catch (error) {
+    console.error('Update note error:', error);
+    return NextResponse.json(
+      { message: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 // PATCH - Update note status (admin only)
 export async function PATCH(request: NextRequest) {
   try {

@@ -7,7 +7,9 @@ import Navbar from '@/components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Calendar, User, ExternalLink, MessageCircle, Send } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ArrowLeft, Calendar, User, ExternalLink, MessageCircle, Send, Edit, Trash2, Save, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiFetch } from '@/lib/api';
 
@@ -46,6 +48,10 @@ export default function NoteDetailPage() {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [editingNote, setEditingNote] = useState(false);
+  const [editedNote, setEditedNote] = useState({ title: '', description: '', subject: '', referenceLink: '' });
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editedCommentContent, setEditedCommentContent] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -67,6 +73,12 @@ export default function NoteDetailPage() {
         const foundNote = data.notes.find((n: Note) => n._id === params.id);
         if (foundNote) {
           setNote(foundNote);
+          setEditedNote({
+            title: foundNote.title,
+            description: foundNote.description,
+            subject: foundNote.subject,
+            referenceLink: foundNote.referenceLink || '',
+          });
         } else {
           toast({
             title: 'Error',
@@ -142,6 +154,187 @@ export default function NoteDetailPage() {
     }
   };
 
+  const handleDeleteNote = async () => {
+    if (!confirm('Are you sure you want to delete this note? This action cannot be undone.')) return;
+
+    try {
+      const res = await apiFetch(`/api/notes?noteId=${params.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        toast({
+          title: 'Success',
+          description: data.message,
+        });
+        router.push('/notes');
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete note',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleEditNote = () => {
+    setEditingNote(true);
+  };
+
+  const handleCancelEditNote = () => {
+    setEditingNote(false);
+    if (note) {
+      setEditedNote({
+        title: note.title,
+        description: note.description,
+        subject: note.subject,
+        referenceLink: note.referenceLink || '',
+      });
+    }
+  };
+
+  const handleSaveNote = async () => {
+    if (!editedNote.title.trim() || !editedNote.description.trim() || !editedNote.subject.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Title, description, and subject are required',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const res = await apiFetch('/api/notes', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          noteId: params.id,
+          ...editedNote,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setNote(data.note);
+        setEditingNote(false);
+        toast({
+          title: 'Success',
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error updating note:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update note',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm('Are you sure you want to delete this comment?')) return;
+
+    try {
+      const res = await apiFetch(`/api/comments?commentId=${commentId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setComments(comments.filter(c => c._id !== commentId));
+        toast({
+          title: 'Success',
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete comment',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleEditComment = (commentId: string, content: string) => {
+    setEditingCommentId(commentId);
+    setEditedCommentContent(content);
+  };
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null);
+    setEditedCommentContent('');
+  };
+
+  const handleSaveComment = async (commentId: string) => {
+    if (!editedCommentContent.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Comment cannot be empty',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const res = await apiFetch('/api/comments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commentId,
+          content: editedCommentContent,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setComments(comments.map(c => c._id === commentId ? data.comment : c));
+        setEditingCommentId(null);
+        setEditedCommentContent('');
+        toast({
+          title: 'Success',
+          description: data.message,
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: data.message,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update comment',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100">
@@ -174,43 +367,122 @@ export default function NoteDetailPage() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <CardTitle className="text-3xl text-pink-900 mb-2">{note.title}</CardTitle>
-                <CardDescription className="text-lg">{note.subject}</CardDescription>
+                {editingNote ? (
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={editedNote.title}
+                        onChange={(e) => setEditedNote({ ...editedNote, title: e.target.value })}
+                        className="placeholder:text-gray-400"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="subject">Subject</Label>
+                      <Input
+                        id="subject"
+                        value={editedNote.subject}
+                        onChange={(e) => setEditedNote({ ...editedNote, subject: e.target.value })}
+                        className="placeholder:text-gray-400"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <CardTitle className="text-3xl text-pink-900 mb-2">{note.title}</CardTitle>
+                    <CardDescription className="text-lg">{note.subject}</CardDescription>
+                  </>
+                )}
               </div>
+              {user && note.uploadedBy._id === user._id && (
+                <div className="flex gap-2 ml-4">
+                  {editingNote ? (
+                    <>
+                      <Button size="sm" onClick={handleSaveNote}>
+                        <Save className="h-4 w-4 mr-1" />
+                        Save
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={handleCancelEditNote}>
+                        <X className="h-4 w-4 mr-1" />
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button size="sm" variant="outline" onClick={handleEditNote}>
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={handleDeleteNote}>
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="prose max-w-none">
-              <p className="text-gray-700 whitespace-pre-wrap">{note.description}</p>
-            </div>
+            {editingNote ? (
+              <>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={editedNote.description}
+                    onChange={(e) => setEditedNote({ ...editedNote, description: e.target.value })}
+                    className="placeholder:text-gray-400"
+                    rows={8}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="referenceLink">Reference Link (Optional)</Label>
+                  <Input
+                    id="referenceLink"
+                    value={editedNote.referenceLink}
+                    onChange={(e) => setEditedNote({ ...editedNote, referenceLink: e.target.value })}
+                    placeholder="https://..."
+                    className="placeholder:text-gray-400"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="prose max-w-none">
+                  <p className="text-gray-700 whitespace-pre-wrap">{note.description}</p>
+                </div>
 
-            {note.referenceLink && (
-              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
-                <h4 className="font-semibold text-pink-900 mb-2 flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  Reference Link
-                </h4>
-                <a
-                  href={note.referenceLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-pink-600 hover:text-pink-700 underline break-all"
-                >
-                  {note.referenceLink}
-                </a>
-              </div>
+                {note.referenceLink && (
+                  <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-pink-900 mb-2 flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Reference Link
+                    </h4>
+                    <a
+                      href={note.referenceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-pink-600 hover:text-pink-700 underline break-all"
+                    >
+                      {note.referenceLink}
+                    </a>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-6 text-sm text-muted-foreground pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span>{note.uploadedBy.name} ({note.uploadedBy.studentId})</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>{new Date(note.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </>
             )}
-
-            <div className="flex items-center gap-6 text-sm text-muted-foreground pt-4 border-t">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span>{note.uploadedBy.name} ({note.uploadedBy.studentId})</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                <span>{new Date(note.createdAt).toLocaleDateString()}</span>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
@@ -265,11 +537,45 @@ export default function NoteDetailPage() {
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(comment.createdAt).toLocaleDateString()}
+                        </span>
+                        {user && comment.userId._id === user._id && (
+                          <div className="flex gap-1">
+                            {editingCommentId === comment._id ? (
+                              <>
+                                <Button size="sm" variant="ghost" onClick={() => handleSaveComment(comment._id)}>
+                                  <Save className="h-3 w-3" />
+                                </Button>
+                                <Button size="sm" variant="ghost" onClick={handleCancelEditComment}>
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Button size="sm" variant="ghost" onClick={() => handleEditComment(comment._id, comment.content)}>
+                                  <Edit className="h-3 w-3" />
+                                </Button>
+                                <Button size="sm" variant="ghost" onClick={() => handleDeleteComment(comment._id)}>
+                                  <Trash2 className="h-3 w-3 text-red-500" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-gray-700 whitespace-pre-wrap ml-10">{comment.content}</p>
+                    {editingCommentId === comment._id ? (
+                      <Textarea
+                        value={editedCommentContent}
+                        onChange={(e) => setEditedCommentContent(e.target.value)}
+                        className="ml-10 placeholder:text-gray-400"
+                        rows={3}
+                      />
+                    ) : (
+                      <p className="text-gray-700 whitespace-pre-wrap ml-10">{comment.content}</p>
+                    )}
                   </div>
                 ))
               )}
