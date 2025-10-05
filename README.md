@@ -35,6 +35,14 @@ Our project is designed to help students share their study notes and learn toget
 - Smooth animations
 
  # 🖼️ Screenshots
- 🔖 ** Login/Register with Student ID
+ 🔖 **Login/Register with Student ID
+ <img width="2830" height="1368" alt="Image" src="https://github.com/user-attachments/assets/0884e26f-db7b-491d-8f7e-73b8b717e345" />
+
+ <img width="2830" height="1368" alt="Image" src="https://github.com/user-attachments/assets/63f49864-69ea-4305-a2e9-02ea3b63baf6" />
+
+ 🔖 **Browsing notes
+ 
+
+ 
  
  
