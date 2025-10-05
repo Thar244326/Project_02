@@ -283,6 +283,6 @@ Feel free to open issues or submit pull requests!
 
 MIT
 
-## Made with 💖
+## Made with love
 
 Enjoy building and learning together!
