@@ -4,7 +4,8 @@ A beautiful, full-stack study notes sharing platform built with **Next.js 15**, 
 
 # 👥 Team Members
 
-Myat Yadanar Khin -
+Myat Yadanar Khin - 
+
 Thar Lin Htet -
 
 # Project Description
@@ -34,4 +35,6 @@ Our project is designed to help students share their study notes and learn toget
 - Smooth animations
 
  # 🖼️ Screenshots
+ 🔖 ** Login/Register with Student ID
+ 
  
