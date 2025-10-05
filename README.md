@@ -4,9 +4,15 @@ A beautiful, full-stack study notes sharing platform built with **Next.js 15**, 
 
 # 👥 Team Members
 
-Myat Yadanar Khin - 
+Myat Yadanar Khin 
 
-Thar Lin Htet -
+Thar Lin Htet 
+
+#  💻 Live Demo
+
+🔗 **Live Site: https://wad-6642062.malaysiawest.cloudapp.azure.com/app/Project_02
+
+🎥 Demo Video: https://youtu.be/pvqn2egOvGU
 
 # Project Description
 Our project is designed to help students share their study notes and learn together through a community-driven platform.
@@ -59,11 +65,9 @@ Used CRUD operations
  🔖 **Main Page**
  <img width="2880" height="1550" alt="Image" src="https://github.com/user-attachments/assets/47a9cc86-a446-4713-8872-53e55c726443" />
 
-#  💻 Live Demo
 
-🔗 **Live Site: https://wad-6642062.malaysiawest.cloudapp.azure.com/app/Project_02
 
-🎥 Demo Video: YouTube Link
+🎥 Demo Video: https://youtu.be/pvqn2egOvGU
  
 
  
